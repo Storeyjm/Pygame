@@ -39,6 +39,9 @@ death = 0
 # Manages how fast screen refreshes
 clock = pygame.time.Clock()
 
+## -- GAME CLASS
+#class game()
+
 while not done:
 
     # -- User input and controls
@@ -64,13 +67,13 @@ while not done:
     ball_y_val = ball_y_val + ball_y_direction
 
     if ball_y_val == 0 or ball_y_val > size[1] - ball_width:
-        ball_y_direction = ball_y_direction * -1
+        ball_y_direction = (ball_y_direction + 1) * -1
     #endif
     elif ball_x_val > size [0] - ball_width:
-        ball_x_direction = ball_x_direction * -1
+        ball_x_direction = (ball_x_direction + 1) * -1
     #endif
     elif ball_x_val < padd_width and ball_y_val > y_padd and ball_y_val < y_padd + padd_length:
-        ball_x_direction = ball_x_direction * -1
+        ball_x_direction = (ball_x_direction + 1) * -1
         score = score + 1
     #endif
     elif ball_x_val <= 0:
@@ -87,7 +90,7 @@ while not done:
 
     pygame.draw.rect(screen, RED, (ball_x_val,ball_y_val,ball_width,ball_width))
     pygame.draw.rect(screen, WHITE, (x_padd,y_padd,padd_width,padd_length))
-    def drawScore()
+    #def drawScore()
     # -- Flip display to reveal new position of objects 
     pygame.display.flip()
 
