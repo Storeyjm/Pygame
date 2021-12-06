@@ -70,12 +70,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 440
         self.rect.x = 320
     #End Procedure
-    def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT] and self.rect.x < 600:
-            self.rect.x = self.rect.x + 5
-        elif keys[pygame.K_LEFT] and self.rect.x > 0:
-            self.rect.x = self.rect.x - 5
+
     #endif
     #End Procedure
 #End Class
@@ -95,9 +90,8 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x = 320
     #End Procedure
     def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and self.rect.y < 0:
-            self.rect.y = self.rect.y - 3
+        self.rect.y = self.rect.y - self.speed
+  
         #endif 
     #End Procedure
 #End Class
@@ -131,8 +125,10 @@ class Game():
         #Next x
 
         #Create the bullets
-        number_of_bullets = 1
-        for x in range (number_of_bullets):
+        self.number_of_bullets = 0
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP] and self.number_of_bullets <= 10:
+            self.number_of_bullets = self.number_of_bullets + 1
             my_bullet = Bullet(WHITE, 5, 10, 3)
             self.bullet_group.add (my_bullet)
             self.all_sprites_group.add (my_bullet)
@@ -142,6 +138,16 @@ class Game():
     def game_run(self):
 
         self.all_sprites_group.update()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT] and self.rect.x < 600:
+            self.rect.x = self.rect.x + 5
+        elif keys[pygame.K_LEFT] and self.rect.x > 0:
+            self.rect.x = self.rect.x - 5
+        if keys[pygame.K_UP]:
+            g.number_of_bullets = g.number_of_bullets + 1
+            b = Bullet(WHITE,5,5,4)
+            g.bullet_group.add(b)
+            g.all_sprites_group.add(b)
         
         # -- Screen background is GREY
 
