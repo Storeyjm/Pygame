@@ -86,7 +86,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill(color)
         #Set the position of the Sprite
         self.rect = self.image.get_rect()
-        self.rect.y = 200
+        self.rect.y = 480
         self.rect.x = 320
     #End Procedure
     def update(self):
@@ -126,12 +126,13 @@ class Game():
 
         #Create the bullets
         self.number_of_bullets = 0
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and self.number_of_bullets <= 10:
-            self.number_of_bullets = self.number_of_bullets + 1
-            my_bullet = Bullet(WHITE, 5, 10, 3)
-            self.bullet_group.add (my_bullet)
-            self.all_sprites_group.add (my_bullet)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if  event.key == pygame.K_UP and self.number_of_bullets <= 10:
+                    self.number_of_bullets = self.number_of_bullets + 1
+                    my_bullet = Bullet(WHITE, 5, 10, 3)
+                    self.bullet_group.add (my_bullet)
+                    self.all_sprites_group.add (my_bullet)
         #Next x
     # End of constructor
         
