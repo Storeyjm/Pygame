@@ -65,19 +65,33 @@ class Player(pygame.sprite.Sprite):
         # Create a sprite and fill it with color
         self.image = pygame.Surface([width, height])
         self.image.fill(color)
+        self.width = width
+        self.height = height
         #Set the position of the Sprite
         self.rect = self.image.get_rect()
         self.rect.y = 440
         self.rect.x = 320
+        self.player_speed = 0
     #End Procedure
+    def update(self):
+        if self.rect.x < 0 or self.rect.x > 600:
+            if self.rect.x > 600:
+                self.rect.x = 600
+            elif self.rect.x < 0:
+                self.rect.x = 0
+        else:
+            self.rect.x = self.rect.x + self.player_speed
+            #End if
+        #End if
 
-    #endif
+
+
     #End Procedure
 #End Class
 
 class Bullet(pygame.sprite.Sprite):
     # Define constructor for Player
-    def __init__(self, color, width, height, speed):
+    def __init__(self, color, width, height, speed, x, y):
         self.speed = speed
         # Call the sprite constructor
         super().__init__()
@@ -86,8 +100,8 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill(color)
         #Set the position of the Sprite
         self.rect = self.image.get_rect()
-        self.rect.y = 480
-        self.rect.x = 320
+        self.rect.y = y - height
+        self.rect.x = x
     #End Procedure
     def update(self):
         self.rect.y = self.rect.y - self.speed
@@ -117,39 +131,46 @@ class Game():
         #Next x
 
         #Create the players
-        number_of_players = 1
-        for x in range (number_of_players):
-            my_player = Player(LILAC, 40, 40)
-            self.player_group.add (my_player)
-            self.all_sprites_group.add (my_player)
+        self.my_player = Player(LILAC, 40, 40)
+        self.player_group.add (self.my_player)
+        self.all_sprites_group.add (self.my_player)
         #Next x
 
         #Create the bullets
         self.number_of_bullets = 0
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if  event.key == pygame.K_UP and self.number_of_bullets <= 10:
-                    self.number_of_bullets = self.number_of_bullets + 1
-                    my_bullet = Bullet(WHITE, 5, 10, 3)
-                    self.bullet_group.add (my_bullet)
-                    self.all_sprites_group.add (my_bullet)
-        #Next x
+
     # End of constructor
         
     def game_run(self):
 
         self.all_sprites_group.update()
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT] and self.rect.x < 600:
-            self.rect.x = self.rect.x + 5
-        elif keys[pygame.K_LEFT] and self.rect.x > 0:
-            self.rect.x = self.rect.x - 5
-        if keys[pygame.K_UP]:
-            g.number_of_bullets = g.number_of_bullets + 1
-            b = Bullet(WHITE,5,5,4)
-            g.bullet_group.add(b)
-            g.all_sprites_group.add(b)
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                return True
         
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    self.my_player.player_speed = 5
+
+
+                elif event.key == pygame.K_LEFT and self.my_player.rect.x > 0:
+                    self.my_player.player_speed =-5
+
+
+                elif event.key == pygame.K_UP:
+                    self.number_of_bullets = self.number_of_bullets + 1
+                    my_bullet = Bullet(WHITE, 5, 10, 2, self.my_player.rect.x + (self.my_player.width*0.5), 480 - self.my_player.height)
+                    self.bullet_group.add (my_bullet)
+                    self.all_sprites_group.add (my_bullet)
+
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key ==pygame.K_RIGHT:
+                    self.my_player.player_speed = 0
+                
+
+
         # -- Screen background is GREY
 
         screen.fill (GREY)
@@ -168,14 +189,10 @@ class Game():
 g = Game()
 while not done:
 
-    for event in pygame.event.get():
+    ret = g.game_run()
 
-        if event.type == pygame.QUIT:
-            done = True
-        #Endif
-    #Next event
-
-    g.game_run()
+    if ret == True:
+        done = True
 #Endwhile - End of game loop
 
 pygame.quit()
