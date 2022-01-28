@@ -115,26 +115,29 @@ class Game():
   ## -- GAME LOGIC
 
     def __init__(self):
+        # Create variables
+        self.score = 0
+        self.lives = 3
         # Create a list of enemies
         self.enemy_group = pygame.sprite.Group()
         self.player_group =pygame.sprite.Group()
         self.bullet_group = pygame.sprite.Group()
         # Create a list of all sprites
         self.all_sprites_group = pygame.sprite.Group()
+        
 
         #Create the enemies
         number_of_enemies = 10
         for x in range (number_of_enemies):
-            my_enemy = Enemy(AQUA, 25, 25, 1)
-            self.enemy_group.add (my_enemy)
-            self.all_sprites_group.add (my_enemy)
+            self.my_enemy = Enemy(AQUA, 25, 25, 1)
+            self.enemy_group.add (self.my_enemy)
+            self.all_sprites_group.add (self.my_enemy)
         #Next x
 
         #Create the players
         self.my_player = Player(LILAC, 40, 40)
         self.player_group.add (self.my_player)
         self.all_sprites_group.add (self.my_player)
-        #Next x
 
         #Create the bullets
         self.number_of_bullets = 0
@@ -149,28 +152,50 @@ class Game():
 
             if event.type == pygame.QUIT:
                 return True
-        
+            #End if
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
                     self.my_player.player_speed = 5
-
+                #End if
+            #End if
 
                 elif event.key == pygame.K_LEFT and self.my_player.rect.x > 0:
                     self.my_player.player_speed =-5
-
+                #End if
 
                 elif event.key == pygame.K_UP:
                     self.number_of_bullets = self.number_of_bullets + 1
                     my_bullet = Bullet(WHITE, 5, 10, 2, self.my_player.rect.x + (self.my_player.width*0.5), 480 - self.my_player.height)
                     self.bullet_group.add (my_bullet)
                     self.all_sprites_group.add (my_bullet)
-
+                #End if
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key ==pygame.K_RIGHT:
                     self.my_player.player_speed = 0
-                
+                #End if
+            #End if
+        #Next x
 
+        bullet_hit_list = pygame.sprite.groupcollide(self.bullet_group,self.enemy_group, True, True)
+        for b in bullet_hit_list:
+            self.score = self.score + 1
+            print ("score:", self.score)
+        #Next b
+        player_hit_list = pygame.sprite.groupcollide(self.player_group, self.enemy_group, False, True)
+        for p in player_hit_list:
+            self.lives = self.lives - 1
+            print("lives:", self.lives)
+        #Next p
 
+        if self.lives == 0:
+            print ("YOU LOSE!")
+            return True
+        #End if
+
+        if self.score == 9:
+            print ("YOU WIN!!!")
+            return True
+        #End if
         # -- Screen background is GREY
 
         screen.fill (GREY)
